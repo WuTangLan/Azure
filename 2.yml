@@ -1,0 +1,21 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+trigger:
+- repeater
+pool:
+  vmImage: 'ubuntu-latest'
+strategy:
+  matrix:
+    node_12_x:
+      node_version: 12.x
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: $(node_version)
+- script: |
+    npm install
+    npm install @NeuraLegion/nexploit-cli -g || true
+    SCAN_ID=$(nexploit-cli scan:run --token --name "Test Azure" --crawler https://brokencrystals.com)
+    echo $SCAN_ID
