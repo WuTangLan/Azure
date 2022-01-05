@@ -17,5 +17,5 @@ steps:
 - script: |
     npm install
     npm install @NeuraLegion/nexploit-cli -g || true
-    SCAN_ID=$(nexploit-cli scan:run --token --name "Test Azure" --crawler https://brokencrystals.com)
+    SCAN_ID=$(nexploit-cli repeater qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5 --token --id sVAwKV5EHkEPCgbGCp13C2)
     echo $SCAN_ID
