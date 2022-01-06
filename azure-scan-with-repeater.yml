@@ -1,0 +1,32 @@
+trigger:
+- repeater
+pool:
+  vmImage: 'ubuntu-latest'
+strategy:
+  matrix:
+    node_12_x:
+      node_version: 12.x
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: $(node_version)
+- script: |
+    npm install
+    npm install @NeuraLegion/nexploit-cli -g || true
+      echo "Start Repeater :checkered_flag:"
+      PID_REPEATER=$(nexploit-cli repeater --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5 --id sVAwKV5EHkEPCgbGCp13C2 &> /dev/null & echo $!)
+      echo "Repeater started PID: $PID_REPEATER\n"
+      sleep 10
+      echo "Start NeuraLegion Scan :checkered_flag:"
+      SCAN_ID=$(nexploit-cli scan:run --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5 --repeater sVAwKV5EHkEPCgbGCp13C2 --name "Azure Scan with Repeater" --crawler https://brokencrystals.com/ --smart)
+      echo "Scan was started with ID https://app.neuralegion.com/scans/$SCAN_ID\n"
+      sleep 10
+      echo "Wait for issues :hourglass_flowing_sand:\n"
+      RESULT=$(nexploit-cli scan:polling --interval 30s --timeout 20m --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5 --breakpoint medium_issue $SCAN_ID)
+      if [ -z "$RESULT" ]
+      then
+          echo "Failed to stop scan"
+      else
+          echo "Stop Scan :octagonal_sign:"
+          nexploit-cli scan:stop --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5 $SCAN_ID
+      fi
