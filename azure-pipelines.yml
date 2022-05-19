@@ -15,7 +15,7 @@ steps:
 - task: NexPloitScan@3
   inputs:
     apiToken: 'qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5'
-    hostname: 'nexploit.app'
+    hostname: 'app.neuralegion'
     module: 'dast'
     discoveryTypes: 'crawler'
     crawlerUrls: 'https://brokencrystals.com/'
