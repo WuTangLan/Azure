@@ -2,22 +2,35 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
+
 trigger:
-- main
+- repeater
+
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
+strategy:
+  matrix:
+    node_12_x:
+      node_version: 12.x
+
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-- task: NexPloitScan@3
+- task: NodeTool@0 
   inputs:
-    apiToken: 'qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5'
-    hostname: 'app.neuralegion'
-    module: 'dast'
-    discoveryTypes: 'crawler'
-    crawlerUrls: 'https://brokencrystals.com/'
-    scanTests: 'angular_csti,jwt,date_manipulation,cookie_security,csrf,directory_listing,dom_xss,file_upload,full_path_disclosure,header_security,http_method_fuzzing,secret_tokens,version_control_systems,wordpress'
-  displayName: 'Run a multi-line script'
+    versionSpec: $(node_version)
+
+- script: |
+    npm install
+    npm install @neuralegion/nexploit-cli -g || true
+      echo "Start NeuraLegion Scan 🏁"
+      SCAN_ID=$(nexploit-cli scan:run --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5  --name "Azure Scan from Cloud" --crawler https://brokencrystals.com/ --smart)
+      echo "Scan was started with ID https://app.neuralegion.com/scans/$SCAN_ID\n"
+      sleep 10
+      echo "Wait for issues ⏳\n"
+      RESULT=$(nexploit-cli scan:polling --interval 30s --timeout 20m --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5 --breakpoint medium_issue $SCAN_ID)
+      if [ -z "$RESULT" ]
+      then
+          echo "Failed to stop scan"
+      else
+          echo "Stop Scan 🛑"
+          nexploit-cli scan:stop --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5 $SCAN_ID
+      fi
