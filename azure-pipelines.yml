@@ -22,7 +22,7 @@ steps:
     npm install
     npm install @neuralegion/nexploit-cli -g || true
       echo "Start NeuraLegion Scan 🏁"
-      SCAN_ID=$(nexploit-cli scan:run --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5  --name "Azure Scan from Cloud" --crawler https://brokencrystals.com/ --smart)
+      SCAN_ID=$(nexploit-cli scan:run --token qdbdlpc.nexp.wlwaucimb4ilwzpjdijz9y0we5uyw3u5  --name "Azure Scan from Cloud" --crawler https://brokencrystals.com/ --smart --integration "azure:NexPloit CLI" )
       echo "Scan was started with ID https://app.neuralegion.com/scans/$SCAN_ID\n"
       sleep 10
       echo "Wait for issues ⏳\n"
